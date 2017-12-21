@@ -1,10 +1,13 @@
 package com.mobapptuts.httpimagedownloader
 
 import android.graphics.Point
+import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.SystemClock
 import android.support.constraint.ConstraintLayout
+import android.widget.Toast
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -19,6 +22,7 @@ class MainActivity : AppCompatActivity() {
             startChronometer()
             imageView.setImageResource(android.R.color.transparent)
             setImageViewDimensions()
+            loadImageUsingPicasso()
         }
     }
 
@@ -37,4 +41,18 @@ class MainActivity : AppCompatActivity() {
         imageView.layoutParams = params
     }
 
+    private fun loadImageUsingPicasso() {
+        Picasso.with(this)
+                .load(Uri.parse(imageUrl))
+                .resize(imageView.layoutParams.width, imageView.layoutParams.height)
+                .into(imageView, object: com.squareup.picasso.Callback {
+                    override fun onSuccess() {
+                        chronometer.stop()
+                    }
+
+                    override fun onError() {
+                        Toast.makeText(applicationContext, "Could not download image", Toast.LENGTH_SHORT).show()
+                    }
+                })
+    }
 }
