@@ -1,10 +1,14 @@
 package com.mobapptuts.httpimagedownloader
 
+import android.graphics.Bitmap
 import android.graphics.Point
+import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.SystemClock
 import android.support.constraint.ConstraintLayout
+import com.bumptech.glide.request.target.BitmapImageViewTarget
+import com.bumptech.glide.request.transition.Transition
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -19,7 +23,19 @@ class MainActivity : AppCompatActivity() {
             startChronometer()
             imageView.setImageResource(android.R.color.transparent)
             setImageViewDimensions()
+            loadImageUsingGlide()
         }
+    }
+
+    private fun loadImageUsingGlide() {
+        GlideApp.with(this).asBitmap()
+                .load(Uri.parse(imageUrl))
+                .into(object: BitmapImageViewTarget(imageView){
+                    override fun onResourceReady(resource: Bitmap?, transition: Transition<in Bitmap>?) {
+                        super.onResourceReady(resource, transition)
+                        chronometer.stop()
+                    }
+                })
     }
 
     private fun startChronometer() {
